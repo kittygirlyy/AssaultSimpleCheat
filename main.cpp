@@ -1,6 +1,5 @@
 #include <iostream>
 #include <Windows.h>
-#include <assert.h>
 
 
 int main() 
@@ -9,27 +8,30 @@ int main()
 	HWND fenetre{ FindWindow(0, "AssaultCube") };
 	if (!fenetre)
 	{
-		std::cout << u8"ça ne marche pas" << std::endl;
+		std::cout << u8"ça ne marche pas\n" << std::endl;
 	} else {
-		std::cout << u8"ça marche (1)";
+		std::cout << u8"Veuillez ouvrir AssaultCube\n";
 		DWORD pId;
 		GetWindowThreadProcessId(fenetre, &pId);
-		HANDLE pH{ OpenProcess(PROCESS_ALL_ACCESS, FALSE, pId) };
-		if (!pH)
+		HANDLE pHandle{ OpenProcess(PROCESS_ALL_ACCESS, FALSE, pId) };
+		if (!pHandle)
 		{
-			std::cout << u8"ça ne marche pas (2)" << std::endl;
+			std::cout << u8"Erreur lors de l'attachement du process\n" << std::endl;
 		} else {
-			std::cout << u8"ça marche (2)";
-			DWORD data{ 999100 };
+			std::cout << u8"Succés\n";
+			DWORD data{};
+			std::cout << "Veuillez choisir combien de munitions vous voulez\n";
+			std::cin >> data;
 			DWORD data2{ sizeof(data) };
-			if (WriteProcessMemory(pH, (LPVOID)0x00DEA420, &data, data2, NULL)) {
-				std::cout << u8"Memoire modifié avec succés" << std::endl;
+			if (WriteProcessMemory(pHandle, (LPVOID)0x00E1A420, &data, data2, NULL)) {
+				std::cout << u8"Memoire modifié avec succés\n" << std::endl;
 			} else {
-				std::cout << u8"Erreur lors de la modification";
+				std::cout << u8"Erreur lors de la modification\n";
 			}
-			CloseHandle(pH);
+			CloseHandle(pHandle);
 		}
 	}
+
 
 	std::cin.ignore();
 	return 0;
